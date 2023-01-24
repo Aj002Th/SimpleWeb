@@ -49,5 +49,13 @@ func main() {
 		ctx.JSON(200, ctx.Params)
 	})
 
+	// 使用group
+	gs := engine.Group("/groups")
+	gs.GET("/group1", func(ctx *sim.Context) {
+		ctx.JSON(200, sim.H{
+			"msg": "visit group1",
+		})
+	})
+
 	log.Fatal(engine.Run())
 }
