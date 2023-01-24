@@ -9,7 +9,7 @@ type Engine struct {
 	router map[string]HandlerFunc
 }
 
-type HandlerFunc func(w http.ResponseWriter, req *http.Request)
+type HandlerFunc func(ctx *Context)
 
 func New() *Engine {
 	return &Engine{
@@ -21,7 +21,7 @@ func New() *Engine {
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	key := req.Method + "-" + req.URL.Path
 	if f, ok := e.router[key]; ok {
-		f(w, req)
+		f(newContext(w, req))
 	} else {
 		_, _ = fmt.Fprintf(w, "some error in %s: %s", req.URL.Path, "no route found")
 	}

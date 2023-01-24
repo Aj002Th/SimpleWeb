@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"simpleWeb/sim"
 )
 
@@ -14,16 +13,16 @@ func main() {
 	log.Fatal(engine.Run())
 }
 
-func echoHandler(w http.ResponseWriter, r *http.Request) {
-	bytes, err := io.ReadAll(r.Body)
+func echoHandler(ctx *sim.Context) {
+	bytes, err := io.ReadAll(ctx.Req.Body)
 	data := string(bytes)
 	fmt.Printf("get req: %v", data)
 	if err != nil {
-		_, _ = fmt.Fprintf(w, "some error in /echo: %v", err)
+		_, _ = fmt.Fprintf(ctx.Writer, "some error in /echo: %v", err)
 		if err != nil {
 			return
 		}
 		return
 	}
-	_, _ = fmt.Fprint(w, data)
+	_, _ = fmt.Fprint(ctx.Writer, data)
 }
