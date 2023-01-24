@@ -10,10 +10,10 @@ type Context struct {
 	Writer http.ResponseWriter
 	Req    *http.Request
 
-	// 常用所以提取出来
 	// request
 	Path   string
 	Method string
+	Params map[string]string
 	// response
 	StatusCode int
 }
@@ -37,6 +37,12 @@ func (ctx *Context) PostForm(key string) string {
 	return ctx.Req.FormValue(key)
 }
 
+// Param 获取Param参数
+func (ctx *Context) Param(key string) string {
+	val, _ := ctx.Params[key] // 避免由于获取不存在的key导致panic
+	return val
+}
+
 // SetHeader 设置头部
 func (ctx *Context) SetHeader(key, value string) {
 	ctx.Writer.Header().Set(key, value)
@@ -55,7 +61,7 @@ func (ctx *Context) String(code int, format string, v ...any) {
 	_, _ = ctx.Writer.Write([]byte(fmt.Sprintf(format, v)))
 }
 
-// Html 响应html
+// HTML 响应html
 func (ctx *Context) HTML(code int, html string) {
 	ctx.SetHeader("content-type", "text/html")
 	ctx.Status(code)
