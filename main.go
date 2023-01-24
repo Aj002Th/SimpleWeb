@@ -39,8 +39,14 @@ func main() {
 		})
 	})
 
+	// 获取html响应
 	engine.GET("/html", func(ctx *sim.Context) {
 		ctx.HTML(200, "<h1>hello world<h1/>")
+	})
+
+	// json形式获取param参数
+	engine.GET("/params/:a/:b/c/*d", func(ctx *sim.Context) {
+		ctx.JSON(200, ctx.Params)
 	})
 
 	log.Fatal(engine.Run())

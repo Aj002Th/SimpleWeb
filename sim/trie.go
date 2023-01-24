@@ -1,5 +1,7 @@
 package sim
 
+import "strings"
+
 /*
 *	something not good:
 *		没有实现路由模糊匹配和精确匹配之间的优先级
@@ -63,7 +65,8 @@ func (n *node) insert(pattern string, parts []string, height int) {
 // 匹配路由规则
 func (n *node) search(parts []string, height int) *node {
 	// 结束条件
-	if len(parts) == height {
+	// 注意遇到*都是能够匹配的
+	if len(parts) == height || strings.HasPrefix(n.part, "*") {
 		if n.pattern == "" {
 			return nil
 		}
