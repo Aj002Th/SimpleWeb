@@ -9,20 +9,39 @@ import (
 
 func main() {
 	engine := sim.New()
-	engine.POST("/echo", echoHandler)
-	log.Fatal(engine.Run())
-}
 
-func echoHandler(ctx *sim.Context) {
-	bytes, err := io.ReadAll(ctx.Req.Body)
-	data := string(bytes)
-	fmt.Printf("get req: %v", data)
-	if err != nil {
-		_, _ = fmt.Fprintf(ctx.Writer, "some error in /echo: %v", err)
+	// 回声
+	engine.POST("/echo", func(ctx *sim.Context) {
+		bytes, err := io.ReadAll(ctx.Req.Body)
+		data := string(bytes)
+		fmt.Printf("get req: %v", data)
 		if err != nil {
+			_, _ = fmt.Fprintf(ctx.Writer, "some error in /echo: %v", err)
+			if err != nil {
+				return
+			}
 			return
 		}
-		return
-	}
-	_, _ = fmt.Fprint(ctx.Writer, data)
+		_, _ = fmt.Fprint(ctx.Writer, data)
+	})
+
+	// string的形式返回query参数"data"
+	engine.GET("/query", func(ctx *sim.Context) {
+		val := ctx.Query("data")
+		ctx.String(200, "data:%s", val)
+	})
+
+	// json的形式返回form参数"data"
+	engine.POST("/form", func(ctx *sim.Context) {
+		val := ctx.PostForm("data")
+		ctx.JSON(200, sim.H{
+			"data": val,
+		})
+	})
+
+	engine.GET("/html", func(ctx *sim.Context) {
+		ctx.HTML(200, "<h1>hello world<h1/>")
+	})
+
+	log.Fatal(engine.Run())
 }
