@@ -57,5 +57,12 @@ func main() {
 		})
 	})
 
+	// 在group上使用中间件打印信息
+	gs.Use(func(ctx *sim.Context) {
+		fmt.Printf("a req is coming: %s\n", ctx.Path)
+		ctx.Next()
+		fmt.Printf("a req is leaving: %s\n", ctx.Path)
+	})
+
 	log.Fatal(engine.Run())
 }

@@ -1,7 +1,6 @@
 package sim
 
 import (
-	"net/http"
 	"strings"
 )
 
@@ -47,16 +46,13 @@ func (r *router) addRoute(method, path string, handler HandlerFunc) {
 	r.roots[method].insert(path, parts, 0)
 }
 
-// 处理路由
-func (r *router) handle(ctx *Context) {
-	method := ctx.Req.Method
-	path := ctx.Req.URL.Path
+// 路由查找
+func (r *router) getRoute(method string, path string) (map[string]string, HandlerFunc) {
+	// 解析url
 	searchParts := parsePath(path)
-
 	n := r.roots[method].search(searchParts, 0)
 	if n == nil {
-		ctx.String(http.StatusNotFound, "404 NOT FOUND: %s\n", ctx.Path)
-		return
+		return map[string]string{}, nil
 	}
 
 	// 获取params参数
@@ -73,7 +69,31 @@ func (r *router) handle(ctx *Context) {
 			break
 		}
 	}
+
+	// 得到handler
+	return params, r.handlers[key]
+}
+
+// 处理路由
+func (r *router) handle(ctx *Context) {
+	method := ctx.Req.Method
+	path := ctx.Req.URL.Path
+
+	// 获得参数和handler
+	params, handler := r.getRoute(method, path)
 	ctx.Params = params
 
-	r.handlers[key](ctx)
+	if handler == nil {
+		// prefix对但是没有对应的路由
+		// 这里也是要过中间件的
+		ctx.handlers = append(ctx.handlers, func(ctx *Context) {
+			ctx.String(404, "404 not found: %s", path)
+		})
+	} else {
+		// 相当于把中间件看成一种特殊的handler
+		// 业务函数就是最后一个中间件
+		ctx.handlers = append(ctx.handlers, handler)
+	}
+
+	ctx.Next()
 }
