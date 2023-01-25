@@ -64,5 +64,23 @@ func main() {
 		fmt.Printf("a req is leaving: %s\n", ctx.Path)
 	})
 
+	// 使用Abort拦截
+	stop := engine.Group("/stop")
+	stop.Use(func(ctx *sim.Context) {
+		fmt.Printf("a req is coming and abort: %s\n", ctx.Path)
+
+		ctx.Abort()
+		ctx.JSON(200, sim.H{
+			"msg": "abort",
+		})
+
+		fmt.Printf("a req is leaving and abort: %s\n", ctx.Path)
+	})
+	stop.GET("/something", func(ctx *sim.Context) {
+		ctx.JSON(200, sim.H{
+			"msg": "pass the abort",
+		})
+	})
+
 	log.Fatal(engine.Run())
 }

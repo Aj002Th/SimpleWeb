@@ -41,6 +41,11 @@ func (ctx *Context) Next() {
 	}
 }
 
+// Abort 拦截,不会进入后续的handler
+func (ctx *Context) Abort() {
+	ctx.handlers = []HandlerFunc{}
+}
+
 // Query 获取Query参数
 func (ctx *Context) Query(key string) string {
 	return ctx.Req.URL.Query().Get(key)
