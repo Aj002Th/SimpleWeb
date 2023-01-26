@@ -8,6 +8,10 @@ import (
 )
 
 func main() {
+	/*
+	 *	测试和展示各种功能的用法
+	 */
+
 	engine := sim.New()
 
 	// 回声
@@ -82,5 +86,9 @@ func main() {
 		})
 	})
 
+	// 静态资源加载
+	engine.Static("/assert", "./static")
+
+	// 启动服务
 	log.Fatal(engine.Run())
 }
