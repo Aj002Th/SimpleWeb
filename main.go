@@ -12,7 +12,11 @@ func main() {
 	 *	测试和展示各种功能的用法
 	 */
 
-	engine := sim.New()
+	// 纯净版
+	//engine := sim.New()
+
+	// 使用默认中间件
+	engine := sim.Default()
 
 	// 回声
 	engine.POST("/echo", func(ctx *sim.Context) {
@@ -94,6 +98,12 @@ func main() {
 	// 作为一种特殊情况
 	// 返回的文件服务器会将任何以 "/index.html" 结尾的请求重定向到相同的路径
 	// 而不是最终的 "index.html"。
+
+	// panic
+	engine.GET("panic", func(ctx *sim.Context) {
+		fmt.Println("meet a panic")
+		panic("something wrong")
+	})
 
 	// 启动服务
 	log.Fatal(engine.Run())

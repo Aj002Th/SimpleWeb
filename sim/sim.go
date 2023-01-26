@@ -31,6 +31,12 @@ func New() *Engine {
 	return engine
 }
 
+func Default() *Engine {
+	engine := New()
+	engine.Use(Recovery(), Logger())
+	return engine
+}
+
 // 实现http服务接口
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	ctx := newContext(w, req)

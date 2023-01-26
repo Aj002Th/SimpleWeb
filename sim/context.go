@@ -104,3 +104,8 @@ func (ctx *Context) JSON(code int, obj any) {
 	}
 	_, _ = ctx.Writer.Write(bytes)
 }
+
+// Fail 请求失败
+func (ctx *Context) Fail(code int, message string) {
+	ctx.String(code, message)
+}
