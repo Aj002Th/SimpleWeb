@@ -87,7 +87,13 @@ func main() {
 	})
 
 	// 静态资源加载
-	engine.Static("/assert", "./static")
+	engine.Static("/", "./static")
+
+	// html也可以通过这样的方式进行访问,相当于可以当一个前端服务器
+	// 注意:
+	// 作为一种特殊情况
+	// 返回的文件服务器会将任何以 "/index.html" 结尾的请求重定向到相同的路径
+	// 而不是最终的 "index.html"。
 
 	// 启动服务
 	log.Fatal(engine.Run())
