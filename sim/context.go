@@ -77,7 +77,7 @@ func (ctx *Context) Status(code int) {
 func (ctx *Context) String(code int, format string, v ...any) {
 	ctx.SetHeader("content-type", "text/plain")
 	ctx.Status(code)
-	_, _ = ctx.Writer.Write([]byte(fmt.Sprintf(format, v)))
+	_, _ = ctx.Writer.Write([]byte(fmt.Sprintf(format, v...)))
 }
 
 // HTML 响应html
